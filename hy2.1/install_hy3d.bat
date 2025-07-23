@@ -13,14 +13,9 @@ if exist .venv\Scripts\activate.bat (
 REM Upgrade pip
 python -m pip install --upgrade pip
 
+REM Install PyTorch and dependencies
+python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121 torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-
-REM Install PyTorch and dependencies (CUDA 12.6)
-python -m pip install torch==2.7.1 torchvision==0.22.1+cu126 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu126
-
-
-REM Check torch importability
-python -c "import torch; print('Torch version:', torch.__version__)"
 
 REM Install numpy 1.26 explicitly
 python -m pip install numpy==1.26.*
@@ -30,6 +25,8 @@ REM Create temp file in root dir
 copy Hunyuan3D-2.1\requirements.txt requirements_tmp.txt >nul
 REM Comment out deepspeed in requirements_tmp.txt to avoid version conflict - no need for deepspeed
 powershell -Command "(Get-Content requirements_tmp.txt) -replace '^(deepspeed[<>=!~0-9., ]*)','# $1' | Set-Content requirements_tmp.txt"
+REM Comment out bpy==4.0 in requirements_tmp.txt to avoid invalid version error
+powershell -Command "(Get-Content requirements_tmp.txt) -replace '^(bpy==4.0)','# $1' | Set-Content requirements_tmp.txt"
 
 REM Install compatible versions to resolve dependency conflicts
 python -m pip install "numpy==1.26.4"
